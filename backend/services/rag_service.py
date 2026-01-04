@@ -120,19 +120,44 @@ def index_document_from_url(project_id: str, url: str):
         # Non-blocking error for now
 
 
-def query_rag(project_id: str, query: str):
-    print(f"DEBUG: GENAI_API_KEY status: {bool(GENAI_API_KEY)}")
+        return f"AI Service Error: {str(e)} (Please check API Key or Connection)"
 
+from static_rag_data import STATIC_KNOWLEDGE_BASE
+
+def find_static_answer(project_id: str, query: str):
+    """Checks for a static answer match. Returns None if no match found."""
+    project_data = STATIC_KNOWLEDGE_BASE.get(str(project_id))
+    if not project_data:
+        return None
+        
+    query_lower = query.lower()
+    for qa in project_data['questions']:
+        if any(k in query_lower for k in qa['keywords']):
+             return qa['answer']
+    return None
+
+def get_fallback_message(project_id: str):
+    """Returns the list of supported questions for a project."""
+    project_data = STATIC_KNOWLEDGE_BASE.get(str(project_id))
+    if not project_data:
+        return "System is in Offline Demo Mode. No specific static data found for this project."
+
+    questions_list = "\n".join([f"- {qa['question']}" for qa in project_data['questions']])
+    return f"I couldn't find a specific answer in my offline database. \n\nTry asking one of these questions:\n{questions_list}"
+
+def query_rag(project_id: str, query: str):
+    print(f"DEBUG: Processing Query for Project {project_id}: '{query}'")
+    
+    # 1. OPTIMIZATION: Check Static Data FIRST (Instant Response)
+    static_ans = find_static_answer(project_id, query)
+    if static_ans:
+        print("DEBUG: Found static match! Returning instantly.")
+        return static_ans
+
+    # 2. If no static match, try API
+    print(f"DEBUG: GENAI_API_KEY status: {bool(GENAI_API_KEY)}")
     if not GENAI_API_KEY:
-         # Simulated Mock Response for Demo
-         if "survival" in query.lower():
-             return "Based on the audit report, the survival rate of the 50,000 planted native saplings is 92%, which exceeds the baseline of 85%."
-         elif "wildlife" in query.lower() or "biodiversity" in query.lower():
-             return "The project reports a return of key species such as the Jaguar and Harpy Eagle due to habitat reconnection."
-         elif "job" in query.lower() or "community" in query.lower():
-             return "The project employs 120 local community members in sustainable forestry jobs."
-         else:
-             return "AI Service is in Demo Mode (No API Key). Context found about Amazon Reforestation, VM0007 verification, and community impact."
+         return get_fallback_message(project_id)
 
     try:
         # Embed query with timeout
@@ -179,9 +204,9 @@ def query_rag(project_id: str, query: str):
             return executor.submit(_generate).result(timeout=60)
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         print(f"RAG Error (Timeout or API): {e}")
-        return f"AI Service Error: {str(e)} (Please check API Key or Connection)"
+        # FALLBACK TO STATIC LIST
+        print("API Failed. Returning fallback list.")
+        return get_fallback_message(project_id)
 
 
