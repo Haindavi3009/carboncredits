@@ -1,0 +1,5 @@
+Found embedding model: models/embedding-001
+Found embedding model: models/text-embedding-004
+Found embedding model: models/gemini-embedding-exp-03-07
+Found embedding model: models/gemini-embedding-exp
+Found embedding model: models/gemini-embedding-001

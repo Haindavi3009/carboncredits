@@ -1,0 +1,26 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv/
+env/
+venv/
+*.log
+
+# Javascript/Node
+node_modules/
+dist/
+build/
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Local Storage
+qdrant_storage
+qdrant_storage_v2
+qdrant_storage_v3
