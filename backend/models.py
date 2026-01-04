@@ -13,6 +13,7 @@ class OrderStatus(enum.Enum):
     PENDING = "PENDING"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
+    RETIRED = "RETIRED"
 
 class User(Base):
     __tablename__ = "users"

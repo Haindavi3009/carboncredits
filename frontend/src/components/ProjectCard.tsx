@@ -10,6 +10,8 @@ interface Project {
     available_credits: number;
     sdg_count: number;
     verified: boolean;
+    authority?: string;
+    validity?: string;
 }
 
 interface Props {
@@ -48,9 +50,22 @@ const ProjectCard: React.FC<Props> = ({ project, onCompare, isSelected = false }
 
             <div className="p-5 flex-1">
                 <div className="flex justify-between items-start mb-4">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${project.verified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                        {project.verified ? '✔ Verified' : 'Unverified'}
-                    </span>
+                    {/* ENHANCED CERT BADGE */}
+                    {project.verified ? (
+                        <div className="flex flex-col items-start gap-1">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800 border border-green-200">
+                                {project.authority || 'Verra'} ✓
+                            </span>
+                            <span className="text-[10px] text-green-600 font-medium">
+                                Valid: {project.validity || '2024-2029'}
+                            </span>
+                        </div>
+                    ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                            ⚠ Pending Verify
+                        </span>
+                    )}
+
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wide pr-2">
                         {project.category}
                     </span>
@@ -85,7 +100,11 @@ const ProjectCard: React.FC<Props> = ({ project, onCompare, isSelected = false }
                     ✨ AI: {aiLabel.text}
                 </div>
 
-                <Link to={`/projects/${project.id}`} className="block w-full text-center bg-white border border-green-600 text-green-600 hover:bg-green-50 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors">
+                <Link
+                    to={`/projects/${project.id}`}
+                    className="block w-full text-center bg-white border border-green-600 text-green-600 hover:bg-green-50 px-4 py-2 rounded shadow-sm text-sm font-medium transition-colors"
+                    onClick={() => console.log("Clicked Project:", project.id)}
+                >
                     View Details
                 </Link>
             </div>

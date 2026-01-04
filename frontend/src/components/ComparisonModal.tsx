@@ -108,8 +108,14 @@ const ComparisonModal: React.FC<Props> = ({ isOpen, onClose, projects }) => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">Certification</td>
                                         {projects.map(p => (
                                             <td key={p.id} className="px-6 py-4 text-sm text-gray-900">
-                                                <div className="font-medium">{p.authority || 'Verra'}</div>
-                                                <div className="text-xs text-gray-500">Valid: {p.validity || '2024-2029'}</div>
+                                                {p.verified ? (
+                                                    <>
+                                                        <div className="font-bold text-green-700">{p.authority || 'Verra'}</div>
+                                                        <div className="text-xs text-green-600">Valid: {p.validity || '2024-2029'}</div>
+                                                    </>
+                                                ) : (
+                                                    <div className="text-red-500 italic">Pending Verification</div>
+                                                )}
                                             </td>
                                         ))}
                                     </tr>

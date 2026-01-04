@@ -6,6 +6,7 @@ import ProjectDetails from './pages/ProjectDetails';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import ProjectOwners from './pages/ProjectOwners';
+import Explorer from './pages/Explorer';
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
                         <Route path="/projects/:id" element={<ProjectDetails />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/project-owners" element={<ProjectOwners />} />
+                        <Route path="/explorer/:tx_hash" element={<Explorer />} />
                     </Routes>
                 </main>
             </div>

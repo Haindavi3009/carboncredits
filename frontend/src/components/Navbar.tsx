@@ -61,14 +61,7 @@ const Navbar: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center">
-                        {!isProjectDetails && (
-                            <button
-                                onClick={handleConnect}
-                                className={`${isConnected ? 'bg-gray-100 text-gray-800' : 'bg-green-600 hover:bg-green-700 text-white'} px-4 py-2 rounded-md text-sm font-medium transition-colors`}
-                            >
-                                {isConnected ? `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)}` : 'Connect Wallet'}
-                            </button>
-                        )}
+                        {/* Wallet Connect Removed as per User Request */}
                     </div>
                 </div>
             </div>

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { ShieldCheck, Lock, Eye, CheckCircle } from 'lucide-react';
 
 const Home: React.FC = () => {
+    const [emissionValue, setEmissionValue] = React.useState(50);
+
     // 5. Featured Projects Data (Preview)
     const featuredProjects = [
         {
@@ -92,7 +94,7 @@ const Home: React.FC = () => {
                             { icon: Eye, text: "OCR Extracts Proof" },
                             { icon: ShieldCheck, text: "AI Explains Impact" },
                             { icon: Lock, text: "Blockchain Locks Use" },
-                            { icon: Leaf, text: "Buy & Offset" } // Leaf imported roughly
+                            { icon: Leaf, text: "Buy & Offset" }
                         ].map((step, idx) => (
                             <div key={idx} className="flex flex-col items-center bg-white p-4">
                                 <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4 shadow-sm border border-green-200">
@@ -101,6 +103,50 @@ const Home: React.FC = () => {
                                 <p className="text-sm font-bold text-gray-900 text-center w-24 leading-tight">{step.text}</p>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* IMPACT CALCULATOR */}
+            <div className="bg-gradient-to-br from-green-900 to-green-800 py-16 text-white">
+                <div className="max-w-4xl mx-auto px-4 text-center">
+                    <h2 className="text-3xl font-bold mb-8">Calculate Your Impact</h2>
+
+                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-2xl border border-white/20">
+                        <label className="block text-lg font-medium mb-4">
+                            My estimated emissions: <span className="text-2xl font-bold text-green-300">{emissionValue} tCO2</span>
+                        </label>
+                        <input
+                            type="range"
+                            min="10"
+                            max="1000"
+                            value={emissionValue}
+                            onChange={(e) => setEmissionValue(parseInt(e.target.value))}
+                            className="w-full h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-400 mb-8"
+                        />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white/5 p-4 rounded-lg border border-white/10 text-left">
+                                <h4 className="font-bold text-green-300 text-sm uppercase mb-2">Recommended Project</h4>
+                                <div className="text-xl font-bold">Solar Farm Alpha</div>
+                                <div className="text-sm text-gray-300 mt-1">Available: 500+ credits • $10.50/t</div>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                                <Link
+                                    to={`/projects/2?quantity=${emissionValue}`}
+                                    className="w-full bg-green-500 hover:bg-green-400 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform hover:scale-105 text-center flex items-center justify-center"
+                                >
+                                    Offset Now (${(emissionValue * 10.5).toLocaleString()})
+                                </Link>
+                                <button
+                                    onClick={() => setEmissionValue(200)}
+                                    className="text-xs text-green-200 hover:text-white underline decoration-dashed"
+                                >
+                                    Mercer Hook: Offset 100 hires' travel (~200t)
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

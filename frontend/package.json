@@ -12,9 +12,11 @@
     "dependencies": {
         "@heroicons/react": "^2.2.0",
         "ethers": "^6.16.0",
+        "jspdf": "^4.0.0",
         "lucide-react": "^0.309.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-hot-toast": "^2.6.0",
         "react-router-dom": "^6.21.1"
     },
     "devDependencies": {

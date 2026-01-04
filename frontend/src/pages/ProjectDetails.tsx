@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import AIChat from '../components/AIChat';
 import { Share2, MapPin, Tag, FileText, Cpu, Lock, ShieldCheck, ArrowRight, Info, Mail } from 'lucide-react';
 import RetirementModal from '../components/RetirementModal';
+import toast, { Toaster } from 'react-hot-toast';
 
 // Rich Mock Data (simulating API response)
 interface ProjectDoc {
@@ -178,10 +179,13 @@ const PROJECTS: Record<string, ProjectData> = {
 
 const ProjectDetails: React.FC = () => {
     const { id } = useParams();
+    const [searchParams] = useSearchParams(); // Add this
+    console.log("ProjectDetails mounted with ID:", id);
     const project = PROJECTS[id || '1'] || PROJECTS['1'];
 
     const [activeTab, setActiveTab] = useState<'overview' | 'ai' | 'docs'>('overview');
-    const [quantity, setQuantity] = useState(1);
+    // Initialize quantity from URL or default to 1
+    const [quantity, setQuantity] = useState(parseInt(searchParams.get('quantity') || '1'));
     const [isRetireModalOpen, setIsRetireModalOpen] = useState(false);
     const [uploading, setUploading] = useState(false);
 
@@ -236,21 +240,56 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
-    const handleBuy = () => {
-        setIsRetireModalOpen(true);
+    const handleBuy = async () => {
+        setUploading(true); // Reusing uploading state for loading indicator
+        try {
+            const res = await fetch('http://localhost:8000/orders/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    project_id: project.id,
+                    quantity: quantity
+                })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                toast.success(
+                    (t) => (
+                        <div className="flex flex-col">
+                            <span>Transaction Confirmed!</span>
+                            <a
+                                href={`/explorer/${data.tx_hash}`}
+                                className="text-blue-600 underline text-sm mt-1 font-mono"
+                            >
+                                View 0x{data.tx_hash.substring(2, 8)}...
+                            </a>
+                        </div>
+                    ),
+                    { duration: 5000 }
+                );
+            } else {
+                toast.error("Purchase failed");
+            }
+        } catch (error) {
+            console.error("Purchase error", error);
+            toast.error("Error processing purchase");
+        } finally {
+            setUploading(false);
+        }
     };
 
-    const handleConfirmRetirement = (details: { beneficiary: string; purpose: string }) => {
-        console.log("Retiring credits:", { quantity, ...details });
-        // Simulation of blockchain interaction
-        setTimeout(() => {
-            alert(`Successfully retired ${quantity} credits for ${details.beneficiary || 'Self'}!\n\nTransaction ID: 0x${Math.random().toString(16).substr(2, 10).toUpperCase()}`);
-            setIsRetireModalOpen(false);
-        }, 1000);
+    const handleConfirmRetirement = async (details: { beneficiary: string; purpose: string }) => {
+        // Mock retirement for now, mirroring the Dashboard logic can be added later if needed here
+        // For project details page, maybe we just close modal or redirect? 
+        // For now, let's just close the modal and show a mock success to prevent crash
+        setIsRetireModalOpen(false);
+        toast.success("Retirement request logged (Mock)");
     };
 
     return (
         <div className="bg-gray-50 min-h-screen pb-12">
+            <Toaster position="top-right" />
             <RetirementModal
                 isOpen={isRetireModalOpen}
                 onClose={() => setIsRetireModalOpen(false)}
